@@ -4,8 +4,8 @@ import rustam.fadeev.sky_movies_api.entities.MovieEntity;
 
 import java.sql.Date;
 
-public record MovieModel(Long id, String name, Date releaseDate) {
-    public MovieModel(MovieEntity resultModel) {
+public record RatingModel(Long id, String name, Date releaseDate) {
+    public RatingModel(MovieEntity resultModel) {
         this(resultModel.getId(), resultModel.getName(), resultModel.getReleaseDate());
     }
 }

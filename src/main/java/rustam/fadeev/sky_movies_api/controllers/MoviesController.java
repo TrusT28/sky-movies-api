@@ -14,11 +14,6 @@ public class MoviesController {
         this.service = service;
     }
 
-//    @GetMapping("/{id}")
-//    public MovieModel getMovieById(@PathVariable Long id){
-//        return service.getMovieByName(id);
-//    }
-
     @GetMapping("/named/{movieName}")
     public MovieModel getMovieByName(@PathVariable String movieName) {
         return service.getMovieByName(movieName);
