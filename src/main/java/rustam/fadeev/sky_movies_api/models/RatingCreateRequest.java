@@ -5,10 +5,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record RatingCreateRequest(
         @NotNull
-        String movieName,
+        Long movieId,
         @NotNull
-        @Email
-        String userEmail,
+        Long userId,
         @NotNull
         Integer rating
 ) {}

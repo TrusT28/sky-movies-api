@@ -27,8 +27,8 @@ public class RatingsController {
 //        return service.getRatingById(id);
 //    }
 //
-//    @PostMapping("/")
-//    public RatingModel createRating(@RequestBody RatingCreateRequest request) {
-//        return service.createRating(request);
-//    }
+    @PostMapping("/")
+    public RatingModel createRating(@RequestBody RatingCreateRequest request) {
+        return service.createRating(request);
+    }
 }

@@ -42,4 +42,20 @@ public class RatingEntity {
     public RatingId getId() {
         return id;
     }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public void setMovie(MovieEntity movie) {
+        this.movie = movie;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public void setId(RatingId id) {
+        this.id = id;
+    }
 }
