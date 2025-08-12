@@ -5,12 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Date;
-
 @Entity
 @Table(name = "users")
 public class UserEntity {
+
     @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Long id;
     @Email
     @NotNull
     private String email;
@@ -38,5 +39,9 @@ public class UserEntity {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

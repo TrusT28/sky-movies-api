@@ -19,6 +19,19 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
+    public MovieModel getMovieById(Long movieId) throws ResponseStatusException {
+        logger.info("Looking for a movie with id: {}", movieId);
+        Optional<MovieEntity> result = movieRepository.findById(movieId);
+        if (result.isPresent()) {
+            logger.info("The movie with id: {} is found", movieId);
+            return new MovieModel(result.get());
+        }
+        else {
+            logger.info("The movie with id: {} is not found", movieId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie with a id" + movieId + " not found.");
+        }
+    }
+
     public MovieModel getMovieByName(String movieName) throws ResponseStatusException {
         logger.info("Looking for a movie with name: {}", movieName);
         Optional<MovieEntity> result = movieRepository.findByName(movieName);

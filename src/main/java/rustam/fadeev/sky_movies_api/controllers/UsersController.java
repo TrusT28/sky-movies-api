@@ -2,7 +2,7 @@ package rustam.fadeev.sky_movies_api.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import rustam.fadeev.sky_movies_api.models.UserCreateRequest;
-import rustam.fadeev.sky_movies_api.models.UserModel;
+import rustam.fadeev.sky_movies_api.models.UserPrivateModel;
 import rustam.fadeev.sky_movies_api.services.UsersService;
 
 @RestController
@@ -15,13 +15,18 @@ public class UsersController {
     }
 
     // TODO all of this should be authenticated
-    @GetMapping("/named/{username}")
-    public UserModel getUserByUsername(@PathVariable String username) {
-        return service.getUserByUsername(username);
+    @GetMapping
+    public UserPrivateModel getUserByUsername(@RequestParam String name) {
+        return service.getUserByUsername(name);
+    }
+
+    @GetMapping("/{userId}")
+    public UserPrivateModel getUserById(@PathVariable Long userId) {
+        return service.getUserById(userId);
     }
 
     @PostMapping("/")
-    public UserModel createUser(@RequestBody UserCreateRequest request) {
+    public UserPrivateModel createUser(@RequestBody UserCreateRequest request) {
         return service.createUser(request);
     }
 }

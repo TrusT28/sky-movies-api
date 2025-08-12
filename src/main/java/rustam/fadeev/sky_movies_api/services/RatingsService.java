@@ -3,18 +3,17 @@ package rustam.fadeev.sky_movies_api.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import rustam.fadeev.sky_movies_api.entities.RatingEntity;
-import rustam.fadeev.sky_movies_api.entities.UserEntity;
+import rustam.fadeev.sky_movies_api.models.MovieRatingsModel;
 import rustam.fadeev.sky_movies_api.models.RatingCreateRequest;
 import rustam.fadeev.sky_movies_api.models.RatingModel;
-import rustam.fadeev.sky_movies_api.models.UserCreateRequest;
-import rustam.fadeev.sky_movies_api.models.UserModel;
 import rustam.fadeev.sky_movies_api.repositories.RatingRepository;
-import rustam.fadeev.sky_movies_api.repositories.UserRepository;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +22,18 @@ public class RatingsService {
     private static final Logger logger = LoggerFactory.getLogger(RatingsService.class);
     public RatingsService(RatingRepository ratingRepository) {
         this.ratingRepository = ratingRepository;
+    }
+
+    public List<MovieRatingsModel> getRatingsOfMovieById(Long movieId) throws ResponseStatusException {
+        logger.info("Looking for ratings of movieId: {}", movieId);
+        List<RatingEntity> result = ratingRepository.findByMovieId(movieId).orElseThrow(() -> {
+            logger.info("The ratings of movieId: {} are not found", movieId);
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "The ratings of a moviId" + movieId + " are not found.");
+        });
+        logger.info("The ratings of movieId: {} are found", movieId);
+        List<MovieRatingsModel> allRatings = new ArrayList<>(Collections.emptyList());
+        result.forEach(ratingEntity -> allRatings.add(new MovieRatingsModel(ratingEntity)));
+        return allRatings;
     }
 
     public RatingModel getRatingById(Long id) throws ResponseStatusException {
@@ -38,17 +49,17 @@ public class RatingsService {
         }
     }
 
-    public RatingModel createRating(RatingCreateRequest ratingCreateRequest) {
-        logger.info("Creating a new rating {} from user with email: {} for a movie: {}", ratingCreateRequest.rating(), ratingCreateRequest.userEmail(), ratingCreateRequest.movieName());
-        RatingEntity ratingEntity = new RatingEntity();
-        // TODO first validate if movie exists
-        // TODO validate rating correctness
-        ratingEntity.setUserEmail(ratingCreateRequest.userEmail());
-        ratingEntity.setMovieName(ratingCreateRequest.movieName());
-        ratingEntity.setRating(ratingCreateRequest.rating());
-
-        RatingEntity result = ratingRepository.save(ratingEntity);
-        logger.info("Rating was created with id: {}", result.getId());
-        return new RatingModel(result);
-    }
+//    public RatingModel createRating(RatingCreateRequest ratingCreateRequest) {
+//        logger.info("Creating a new rating {} from user with email: {} for a movie: {}", ratingCreateRequest.rating(), ratingCreateRequest.userEmail(), ratingCreateRequest.movieName());
+//        RatingEntity ratingEntity = new RatingEntity();
+//        // TODO first validate if movie exists
+//        // TODO validate rating correctness
+//        ratingEntity.setUserEmail(ratingCreateRequest.userEmail());
+//        ratingEntity.setMovieName(ratingCreateRequest.movieName());
+//        ratingEntity.setRating(ratingCreateRequest.rating());
+//
+//        RatingEntity result = ratingRepository.save(ratingEntity);
+//        logger.info("Rating was created with id: {}", result.getId());
+//        return new RatingModel(result);
+//    }
 }

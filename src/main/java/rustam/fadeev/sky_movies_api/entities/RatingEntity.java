@@ -8,41 +8,38 @@ import java.sql.Date;
 @Entity
 @Table(name = "ratings")
 public class RatingEntity {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
-    @NotNull
-    private String movieName;
-    @NotNull
-    private String userEmail;
-    @NotNull
+
+    @EmbeddedId
+    private RatingId id;
+
+    // leverage JPA's functionality for future aggregations
+    @ManyToOne
+    @MapsId("userId")
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    @ManyToOne
+    @MapsId("movieId")
+    @JoinColumn(name = "movie_id")
+    private MovieEntity movie;
+
+    @Column(nullable = false)
     private Integer rating;
 
-    public Long getId() {
-        return id;
+
+    public UserEntity getUser() {
+        return user;
     }
 
-    public String getMovieName() {
-        return movieName;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
+    public MovieEntity getMovie() {
+        return movie;
     }
 
     public Integer getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
+    public RatingId getId() {
+        return id;
     }
 }
