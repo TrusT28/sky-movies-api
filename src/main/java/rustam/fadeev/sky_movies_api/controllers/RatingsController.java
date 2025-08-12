@@ -14,19 +14,6 @@ public class RatingsController {
         this.service = service;
     }
 
-    // TODO all of this should be authenticated
-    // TODO get all ratings for the movie - free
-    // TODO get all ratings for of the user - auth
-    @GetMapping("/{id}")
-    public RatingModel getRatingsOfMovieById(@PathVariable Long id) {
-        return service.getRatingById(id);
-    }
-//
-//    @GetMapping("/")
-//    public RatingModel getRatingsOfUserById(@PathVariable Long id) {
-//        return service.getRatingById(id);
-//    }
-//
     @PostMapping("/")
     public RatingModel createRating(@RequestBody RatingCreateRequest request) {
         return service.createRating(request);
