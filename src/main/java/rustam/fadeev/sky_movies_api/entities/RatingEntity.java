@@ -17,4 +17,32 @@ public class RatingEntity {
     private String userEmail;
     @NotNull
     private Integer rating;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getMovieName() {
+        return movieName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public void setMovieName(String movieName) {
+        this.movieName = movieName;
+    }
 }
