@@ -2,13 +2,19 @@ package rustam.fadeev.sky_movies_api.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import rustam.fadeev.sky_movies_api.entities.MovieEntity;
 import rustam.fadeev.sky_movies_api.entities.UserEntity;
+import rustam.fadeev.sky_movies_api.models.MovieModel;
 import rustam.fadeev.sky_movies_api.models.UserCreateRequest;
 import rustam.fadeev.sky_movies_api.models.UserPrivateModel;
+import rustam.fadeev.sky_movies_api.models.UserPublicModel;
 import rustam.fadeev.sky_movies_api.repositories.UserRepository;
 
 @Service
@@ -19,6 +25,13 @@ public class UsersService {
         this.userRepository = userRepository;
     }
 
+
+    public Page<UserPublicModel> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserEntity> pageResult = userRepository.findAll(pageable);
+
+        return pageResult.map(UserPublicModel::new);
+    }
 
     public UserPrivateModel getUserById(Long userId) throws ResponseStatusException {
         logger.info("Looking for a movie with name: {}", userId);

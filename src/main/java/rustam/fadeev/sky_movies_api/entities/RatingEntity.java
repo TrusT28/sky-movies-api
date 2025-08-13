@@ -24,7 +24,7 @@ public class RatingEntity {
     private MovieEntity movie;
 
     @Column(nullable = false)
-    private Integer rating;
+    private Double rating;
 
 
     public UserEntity getUser() {
@@ -35,7 +35,7 @@ public class RatingEntity {
         return movie;
     }
 
-    public Integer getRating() {
+    public Double getRating() {
         return rating;
     }
 
@@ -51,7 +51,7 @@ public class RatingEntity {
         this.movie = movie;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

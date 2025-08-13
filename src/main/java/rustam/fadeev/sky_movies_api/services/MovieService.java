@@ -2,6 +2,9 @@ package rustam.fadeev.sky_movies_api.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import rustam.fadeev.sky_movies_api.entities.MovieEntity;
@@ -17,6 +20,13 @@ public class MovieService {
     private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
     public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
+    }
+
+    public Page<MovieModel> getAllMovies(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MovieEntity> pageResult = movieRepository.findAll(pageable);
+
+        return pageResult.map(MovieModel::new);
     }
 
     public MovieModel getMovieById(Long movieId) throws ResponseStatusException {

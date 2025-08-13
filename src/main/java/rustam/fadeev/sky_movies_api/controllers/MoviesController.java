@@ -1,14 +1,10 @@
 package rustam.fadeev.sky_movies_api.controllers;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import rustam.fadeev.sky_movies_api.models.MovieCreateRequest;
-import rustam.fadeev.sky_movies_api.models.MovieModel;
-import rustam.fadeev.sky_movies_api.models.MovieRatingsModel;
-import rustam.fadeev.sky_movies_api.models.RatingModel;
+import rustam.fadeev.sky_movies_api.models.*;
 import rustam.fadeev.sky_movies_api.services.MovieService;
 import rustam.fadeev.sky_movies_api.services.RatingsService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/movies")
@@ -21,17 +17,35 @@ public class MoviesController {
         this.ratingsService = ratingsService;
     }
 
+    @GetMapping
+    public PageResponse<MovieModel> getAllMovies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        Page<MovieModel> result = service.getAllMovies(page, size);
+        return new PageResponse<>(result);
+    }
+
     @GetMapping("/{movieId}")
-    public MovieModel getMovieByName(@PathVariable Long movieId) {
+    public MovieModel getMovieById(@PathVariable Long movieId) {
         return service.getMovieById(movieId);
     }
 
     @GetMapping("/{movieId}/ratings")
-    public List<MovieRatingsModel> getRatingsOfMovieById(@PathVariable Long movieId) {
+    public DetailedMovieWithRatingModel getRatingsOfMovieById(@PathVariable Long movieId) {
         return ratingsService.getRatingsOfMovieById(movieId);
     }
 
-    @GetMapping
+    @GetMapping("/top-rated")
+    public PageResponse<SimpleMovieWithRatingModel> getTopRatedMovies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int size) {
+
+        Page<SimpleMovieWithRatingModel> result = ratingsService.getTopRatedMovies(page, size);
+        return new PageResponse<>(result);
+    }
+
+    @GetMapping("/named/{name}")
     public MovieModel getMovieByName(@RequestParam String name) {
         return service.getMovieByName(name);
     }

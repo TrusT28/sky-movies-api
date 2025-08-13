@@ -6,7 +6,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "username")
+})
 public class UserEntity {
 
     @Id
@@ -14,8 +18,10 @@ public class UserEntity {
     private Long id;
     @Email
     @NotNull
+    @Column(nullable = false, unique = true)
     private String email;
     @NotNull
+    @Column(nullable = false, unique = true)
     private String username;
     @NotNull
     @JsonIgnore

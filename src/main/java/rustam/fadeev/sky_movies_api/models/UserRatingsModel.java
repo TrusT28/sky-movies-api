@@ -12,7 +12,7 @@ import rustam.fadeev.sky_movies_api.entities.RatingEntity;
  * @param movie the movie object for which a user submitted a rating
  * @param rating the integer rating value given to the movie
  */
-public record UserRatingsModel(MovieModel movie, Integer rating) {
+public record UserRatingsModel(MovieModel movie, Double rating) {
     public UserRatingsModel(RatingEntity entity) {
         this(new MovieModel(entity.getMovie()), entity.getRating());
     }
