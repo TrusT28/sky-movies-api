@@ -22,6 +22,9 @@ import rustam.fadeev.sky_movies_api.repositories.UserRepository;
 public class UsersService {
     private final UserRepository userRepository;
     private final RatingRepository ratingRepository;
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
     public UsersService(UserRepository userRepository, RatingRepository ratingRepository) {
         this.userRepository = userRepository;
@@ -29,11 +32,11 @@ public class UsersService {
     }
 
 
-    public Page<UserPublicModel> getAllUsers(int page, int size) {
+    public Page<UserPrivateModel> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserEntity> pageResult = userRepository.findAll(pageable);
 
-        return pageResult.map(UserPublicModel::new);
+        return pageResult.map(UserPrivateModel::new);
     }
 
     @Transactional
@@ -60,7 +63,7 @@ public class UsersService {
     }
 
     public UserPrivateModel getUserByUsername(String username) throws ResponseStatusException {
-        logger.info("Looking for a movie with name: {}", username);
+        logger.info("Looking for a user with name: {}", username);
         UserEntity result = userRepository.findByUsername(username).orElseThrow(() -> {
             logger.info("The user with username: {} is not found", username);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "User with a username" + username + " not found.");
@@ -75,11 +78,15 @@ public class UsersService {
         userEntity.setEmail(userCreateRequest.email());
         userEntity.setUsername(userCreateRequest.username());
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         userEntity.setPasswordHash(encoder.encode(userCreateRequest.password()));
 
         UserEntity result = userRepository.save(userEntity);
         logger.info("User {} created with email: {}", result.getUsername(), result.getEmail());
         return new UserPrivateModel(result);
+    }
+
+    public boolean checkPassword(UserEntity user, String rawPassword) {
+        logger.info("Checking password match for userId {}", user.getId());
+        return encoder.matches(rawPassword, user.getPasswordHash());
     }
 }

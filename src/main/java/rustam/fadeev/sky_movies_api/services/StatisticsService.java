@@ -33,6 +33,7 @@ public class StatisticsService {
 
     private double calculate_average(List<MovieRatingsModel> ratings) {
         logger.info("Calculating average...");
+        if(ratings.isEmpty()) return 0.0;
         double scoreSum = ratings.stream()
                 .mapToDouble(MovieRatingsModel::rating)
                 .sum();

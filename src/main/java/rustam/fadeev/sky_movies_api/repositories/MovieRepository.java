@@ -16,7 +16,7 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
     Optional<MovieEntity> findByName(String name);
     Page<MovieEntity> findAll(Pageable pageable);
     @Query("""
-        SELECT m, AVG(r.rating) AS avgRating
+        SELECT m, COALESCE(AVG(r.rating), 0) AS avgRating
         FROM MovieEntity m
         LEFT JOIN RatingEntity r ON r.movie = m
         GROUP BY m

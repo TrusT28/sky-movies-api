@@ -90,7 +90,7 @@ public class RatingsService {
         RatingId id = new RatingId(userId, movieId);
         if (!ratingRepository.existsById(id)) {
             logger.info("Rating for movieId {} by userId {} was not found", movieId, userId);
-            throw new EntityNotFoundException("Rating not found");
+            return;
         }
         ratingRepository.deleteById(id);
         logger.info("Rating for movieId {} by userId {} was successfully deleted", movieId, userId);

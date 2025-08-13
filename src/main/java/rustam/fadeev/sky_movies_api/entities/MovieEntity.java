@@ -6,12 +6,15 @@ import jakarta.validation.constraints.NotNull;
 import java.sql.Date;
 
 @Entity
-@Table(name = "movies")
+@Table(name = "movies",        uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name"),
+})
 public class MovieEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     @NotNull
+    @Column(nullable = false, unique = true)
     private String name;
     @NotNull
     private Date releaseDate;

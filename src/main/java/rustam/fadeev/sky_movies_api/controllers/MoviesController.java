@@ -1,19 +1,23 @@
 package rustam.fadeev.sky_movies_api.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import rustam.fadeev.sky_movies_api.models.*;
+import rustam.fadeev.sky_movies_api.security.RequirePasswordAuth;
 import rustam.fadeev.sky_movies_api.services.MovieService;
 import rustam.fadeev.sky_movies_api.services.RatingsService;
-
-import java.net.http.HttpResponse;
 
 @RestController
 @RequestMapping("/movies")
 public class MoviesController {
     private final MovieService service;
     private final RatingsService ratingsService;
+
+    private static final Logger logger = LoggerFactory.getLogger(MoviesController.class);
+
 
     public MoviesController(MovieService service, RatingsService ratingsService) {
         this.service = service;
@@ -36,6 +40,7 @@ public class MoviesController {
 
     @DeleteMapping("/{movieId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequirePasswordAuth(onlyForAdmin = true)
     public void deleteMovieById(@PathVariable Long movieId) {
         service.deleteMovieById(movieId);
     }
@@ -60,6 +65,7 @@ public class MoviesController {
     }
 
     @PostMapping("/")
+    @RequirePasswordAuth(onlyForAdmin = true)
     public MovieModel createMovie(@RequestBody MovieCreateRequest request) {
         return service.createMovie(request);
     }
