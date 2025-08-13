@@ -1,5 +1,7 @@
 package rustam.fadeev.sky_movies_api.services;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -9,20 +11,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import rustam.fadeev.sky_movies_api.entities.MovieEntity;
 import rustam.fadeev.sky_movies_api.entities.UserEntity;
-import rustam.fadeev.sky_movies_api.models.MovieModel;
 import rustam.fadeev.sky_movies_api.models.UserCreateRequest;
 import rustam.fadeev.sky_movies_api.models.UserPrivateModel;
 import rustam.fadeev.sky_movies_api.models.UserPublicModel;
+import rustam.fadeev.sky_movies_api.repositories.RatingRepository;
 import rustam.fadeev.sky_movies_api.repositories.UserRepository;
 
 @Service
 public class UsersService {
     private final UserRepository userRepository;
+    private final RatingRepository ratingRepository;
     private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
-    public UsersService(UserRepository userRepository) {
+    public UsersService(UserRepository userRepository, RatingRepository ratingRepository) {
         this.userRepository = userRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 
@@ -32,6 +35,19 @@ public class UsersService {
 
         return pageResult.map(UserPublicModel::new);
     }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            logger.info("The user with userId: {} is not found", userId);
+            throw new EntityNotFoundException("User with id" + userId + " not found");
+        }
+        ratingRepository.deleteByUserId(userId);
+        logger.info("The ratings of the user with userId: {} were deleted", userId);
+        userRepository.deleteById(userId);
+        logger.info("The user with userId: {} was deleted", userId);
+    }
+
 
     public UserPrivateModel getUserById(Long userId) throws ResponseStatusException {
         logger.info("Looking for a movie with name: {}", userId);

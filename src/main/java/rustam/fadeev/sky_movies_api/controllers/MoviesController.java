@@ -1,10 +1,13 @@
 package rustam.fadeev.sky_movies_api.controllers;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import rustam.fadeev.sky_movies_api.models.*;
 import rustam.fadeev.sky_movies_api.services.MovieService;
 import rustam.fadeev.sky_movies_api.services.RatingsService;
+
+import java.net.http.HttpResponse;
 
 @RestController
 @RequestMapping("/movies")
@@ -29,6 +32,12 @@ public class MoviesController {
     @GetMapping("/{movieId}")
     public MovieModel getMovieById(@PathVariable Long movieId) {
         return service.getMovieById(movieId);
+    }
+
+    @DeleteMapping("/{movieId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteMovieById(@PathVariable Long movieId) {
+        service.deleteMovieById(movieId);
     }
 
     @GetMapping("/{movieId}/ratings")

@@ -1,6 +1,8 @@
 package rustam.fadeev.sky_movies_api.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import rustam.fadeev.sky_movies_api.models.*;
 import rustam.fadeev.sky_movies_api.services.RatingsService;
@@ -26,6 +28,12 @@ public class UsersController {
     {
         Page<UserPublicModel> result = service.getAllUsers(page, size);
         return new PageResponse<>(result);
+    }
+
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteUserById(@PathVariable Long userId) {
+        service.deleteUserById(userId);
     }
 
     // TODO all of this should be authenticated

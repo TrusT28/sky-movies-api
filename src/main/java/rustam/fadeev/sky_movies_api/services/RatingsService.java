@@ -1,5 +1,6 @@
 package rustam.fadeev.sky_movies_api.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,6 @@ public class RatingsService {
         this.userRepository = userRepository;
         this.statisticsService = statisticsService;
     }
-
     public DetailedMovieWithRatingModel getRatingsOfMovieById(Long movieId) throws ResponseStatusException {
         logger.info("Looking for ratings of movieId: {}", movieId);
         MovieEntity movieEntity = movieRepository.findById(movieId).orElseThrow(() -> {
@@ -74,7 +74,7 @@ public class RatingsService {
 
     public List<UserRatingsModel> getRatingsOfUserById(Long userId) throws ResponseStatusException {
         logger.info("Looking for ratings of userId: {}", userId);
-        List<RatingEntity> result = ratingRepository.findByMovieId(userId).orElseThrow(() -> {
+        List<RatingEntity> result = ratingRepository.findByUserId(userId).orElseThrow(() -> {
             logger.info("The ratings of userId: {} are not found", userId);
             return new ResponseStatusException(HttpStatus.NO_CONTENT, "The ratings of a userId" + userId + " are not found.");
         });
@@ -84,17 +84,26 @@ public class RatingsService {
         return allRatings;
     }
 
-    public RatingModel getRatingById(Long id) throws ResponseStatusException {
-        logger.info("Looking for a rating with id: {}", id);
-        Optional<RatingEntity> result = ratingRepository.findById(id);
-        if (result.isPresent()) {
-            logger.info("The rating with id: {} is found", id);
-            return new RatingModel(result.get());
+
+    public void deleteRatingById(Long movieId, Long userId) throws EntityNotFoundException {
+        logger.info("Deleting a rating for movieId {} by userId {}", movieId, userId);
+        RatingId id = new RatingId(userId, movieId);
+        if (!ratingRepository.existsById(id)) {
+            logger.info("Rating for movieId {} by userId {} was not found", movieId, userId);
+            throw new EntityNotFoundException("Rating not found");
         }
-        else {
-            logger.info("The rating with id: {} is not found", id);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "rating with a id" + id + " not found.");
-        }
+        ratingRepository.deleteById(id);
+        logger.info("Rating for movieId {} by userId {} was successfully deleted", movieId, userId);
+    }
+
+    public RatingModel getRatingById(Long movieId, Long userId) throws ResponseStatusException {
+        logger.info("Getting a rating for movieId {} by userId {}", movieId, userId);
+        RatingId id = new RatingId(userId, movieId);
+        RatingEntity result = ratingRepository.findById(id).orElseThrow(() -> {
+            logger.info("Rating for movieId {} by userId {} was not found", movieId, userId);
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "A rating for movieId " + movieId + " by userId " + userId + "is not found");
+        });
+        return new RatingModel(result);
     }
 
     public RatingModel createRating(RatingCreateRequest request) {

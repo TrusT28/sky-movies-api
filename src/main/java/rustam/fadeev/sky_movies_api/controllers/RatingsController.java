@@ -1,7 +1,9 @@
 package rustam.fadeev.sky_movies_api.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import rustam.fadeev.sky_movies_api.models.RatingCreateRequest;
+import rustam.fadeev.sky_movies_api.models.RatingDeleteRequest;
 import rustam.fadeev.sky_movies_api.models.RatingModel;
 import rustam.fadeev.sky_movies_api.services.RatingsService;
 
@@ -17,5 +19,14 @@ public class RatingsController {
     @PostMapping("/")
     public RatingModel createRating(@RequestBody RatingCreateRequest request) {
         return service.createRating(request);
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteRating(
+            @RequestParam Long movieId,
+            @RequestParam Long userId
+    ) {
+        service.deleteRatingById(movieId, userId);
     }
 }

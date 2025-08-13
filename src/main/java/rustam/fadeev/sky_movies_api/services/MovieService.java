@@ -1,5 +1,6 @@
 package rustam.fadeev.sky_movies_api.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,14 +13,16 @@ import rustam.fadeev.sky_movies_api.models.MovieCreateRequest;
 import rustam.fadeev.sky_movies_api.models.MovieModel;
 import rustam.fadeev.sky_movies_api.repositories.MovieRepository;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.Optional;
+import rustam.fadeev.sky_movies_api.repositories.RatingRepository;
 
 @Service
 public class MovieService {
     private final MovieRepository movieRepository;
+    private final RatingRepository ratingRepository;
     private static final Logger logger = LoggerFactory.getLogger(MovieService.class);
-    public MovieService(MovieRepository movieRepository) {
+    public MovieService(MovieRepository movieRepository, RatingRepository ratingRepository) {
         this.movieRepository = movieRepository;
+        this.ratingRepository = ratingRepository;
     }
 
     public Page<MovieModel> getAllMovies(int page, int size) {
@@ -29,30 +32,36 @@ public class MovieService {
         return pageResult.map(MovieModel::new);
     }
 
+    public void deleteMovieById(Long movieId) {
+        if (!movieRepository.existsById(movieId)) {
+            logger.info("The movie with id: {} is not found", movieId);
+            throw new EntityNotFoundException("Movie with id" + movieId + " not found");
+        }
+        ratingRepository.deleteByMovieId(movieId);
+        logger.info("The ratings for movie with id: {} were deleted", movieId);
+        movieRepository.deleteById(movieId);
+        logger.info("The movie with id: {} was deleted", movieId);
+    }
+
+
     public MovieModel getMovieById(Long movieId) throws ResponseStatusException {
         logger.info("Looking for a movie with id: {}", movieId);
-        Optional<MovieEntity> result = movieRepository.findById(movieId);
-        if (result.isPresent()) {
-            logger.info("The movie with id: {} is found", movieId);
-            return new MovieModel(result.get());
-        }
-        else {
+        MovieEntity result = movieRepository.findById(movieId).orElseThrow(() -> {
             logger.info("The movie with id: {} is not found", movieId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie with a id" + movieId + " not found.");
-        }
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "A movie with movieId " + movieId + " is not found");
+        });
+        logger.info("The movie with id: {} is found", movieId);
+        return new MovieModel(result);
     }
 
     public MovieModel getMovieByName(String movieName) throws ResponseStatusException {
         logger.info("Looking for a movie with name: {}", movieName);
-        Optional<MovieEntity> result = movieRepository.findByName(movieName);
-        if (result.isPresent()) {
-            logger.info("The movie with name: {} is found", movieName);
-            return new MovieModel(result.get());
-        }
-        else {
+        MovieEntity result = movieRepository.findByName(movieName).orElseThrow(() -> {
             logger.info("The movie with name: {} is not found", movieName);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie with a name" + movieName + " not found.");
-        }
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "A movie with name " + movieName + " is not found");
+        });
+        logger.info("The movie with name: {} is found", movieName);
+        return new MovieModel(result);
     }
 
     public MovieModel createMovie(MovieCreateRequest movieRequest) {
