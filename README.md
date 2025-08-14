@@ -29,12 +29,14 @@ I've implemented a custom authentication interceptor. It expects 2 headers: X-Au
 Interceptor works if controller's method has @RequirePasswordAuth annotation. 
 It is possible to set only admin access by using @RequirePasswordAuth(onlyForAdmin = true).
 Later, endpoints get a ThreadLocal with user credentials and check if the authenticated user is admin or not and if it is the same user as in the request.
-Note: In this documentation I will use real admin username and passwords for convenience of testing the results!
-Note: Authentication user admin credentials will work for every endpoint that requires authentication!
+
+**Note**: In this documentation I will use real admin username and passwords for convenience of testing the results!
+
+**Note**: Authentication user admin credentials will work for every endpoint that requires authentication!
 
 ## Endpoints
 ### POST request
-#### CURL
+#### Movies
 Create a movie (requires admin access)
 ```
 curl --location 'localhost:8080/movies/' \
@@ -46,6 +48,8 @@ curl --location 'localhost:8080/movies/' \
     "releaseDate": "2020-02-20"
 }'
 ```
+
+#### Users
 Create a user
 ```
 curl --location 'localhost:8080/users/' \
@@ -56,6 +60,8 @@ curl --location 'localhost:8080/users/' \
     "password": "pass1"
 }'
 ```
+
+#### Ratings
 Create a rating for movie with id 1 by a user with id 1 (Requires authentication by same user. Otherwise it will fail with 403)
 ```
 curl --location 'localhost:8080/ratings/' \
@@ -70,7 +76,8 @@ curl --location 'localhost:8080/ratings/' \
 ```
 
 ### GET request
-#### CURL
+
+#### Movies
 Get all movies
 ```
 curl --location 'localhost:8080/movies'
@@ -82,8 +89,12 @@ curl --location 'localhost:8080/movies/1'
 ```
 
 Get a movie with name Movie1 (case-sensitive)
-`curl --location 'localhost:8080/movies/named/Movie1'`
+```
+curl --location 'localhost:8080/movies/named/Movie1'
+```
 
+
+#### Users
 Get all users (requires admin access)
 ```
 curl --location 'localhost:8080/users' \
@@ -92,43 +103,63 @@ curl --location 'localhost:8080/users' \
 ```
 
 Get a user by id 3 (requires authentication by same user or admin)
-`curl --location 'localhost:8080/users/3' \
+```
+curl --location 'localhost:8080/users/3' \
 --header 'X-Auth-Password: admin123' \
---header 'X-Auth-Username: admin'`
+--header 'X-Auth-Username: admin'
+```
 
 Get a user by username user1 (requires authentication by same user or admin)
-`curl --location 'localhost:8080/users/named/user1' \
+```
+curl --location 'localhost:8080/users/named/user1' \
 --header 'X-Auth-Password: admin123' \
---header 'X-Auth-Username: admin'`
+--header 'X-Auth-Username: admin'
+```
 
+
+#### Ratings
 Get all ratings of a user by userId
-`curl --location 'localhost:8080/users/1/ratings'`
+```
+curl --location 'localhost:8080/users/1/ratings'
+```
 
 Get all ratings of a movie by movieId
-`curl --location 'localhost:8080/movies/1/ratings'`
+```
+curl --location 'localhost:8080/movies/1/ratings'
+```
 
 Get top-rated movies (paginated)
-`curl --location 'localhost:8080/movies/top-rated?page=0&size=10'`
+```
+curl --location 'localhost:8080/movies/top-rated?page=0&size=10'
+```
 
 ### DELETE request
-#### CURL
 I've implemented delete requests for all endpoints. If you delete a user, then all ratings of this user will be deleted too and it will affect movie's average rating.
 If you delete a movie, all ratings of the movie will be deleted, and it will affect ratings of users.
 
-Delete a user with id 1 (requires auth by same user or admin access)
-`curl --location --request DELETE 'localhost:8080/users/1' \
---header 'X-Auth-Password: pass1' \
---header 'X-Auth-Username: user1'`
-
+#### Movies
 Delete a movie with id 2 (requires admin access)
-`curl --location --request DELETE 'localhost:8080/movies/2' \
+```
+curl --location --request DELETE 'localhost:8080/movies/2' \
 --header 'X-Auth-Password: admin123' \
---header 'X-Auth-Username: admin'`
+--header 'X-Auth-Username: admin'
+```
 
-Delete a rating of user with id 1 for a movie with id 3 (requires auth by same user)
-`curl --location --request DELETE 'localhost:8080/ratings?movieId=3&userId=1' \
+#### Users
+Delete a user with id 1 (requires auth by same user or admin access)
+```
+curl --location --request DELETE 'localhost:8080/users/1' \
 --header 'X-Auth-Password: pass1' \
---header 'X-Auth-Username: user1'`
+--header 'X-Auth-Username: user1'
+```
+
+#### Ratings
+Delete a rating of user with id 1 for a movie with id 3 (requires auth by same user)
+```
+curl --location --request DELETE 'localhost:8080/ratings?movieId=3&userId=1' \
+--header 'X-Auth-Password: pass1' \
+--header 'X-Auth-Username: user1'
+```
 
 # Database
 - I used H2 database with file as storage.
