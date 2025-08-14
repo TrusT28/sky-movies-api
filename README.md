@@ -81,6 +81,9 @@ Get a movie with id 1
 curl --location 'localhost:8080/movies/1'
 ```
 
+Get a movie with name Movie1 (case-sensitive)
+`curl --location 'localhost:8080/movies/named/Movie1'`
+
 Get all users (requires admin access)
 ```
 curl --location 'localhost:8080/users' \
@@ -90,6 +93,11 @@ curl --location 'localhost:8080/users' \
 
 Get a user by id 3 (requires authentication by same user or admin)
 `curl --location 'localhost:8080/users/3' \
+--header 'X-Auth-Password: admin123' \
+--header 'X-Auth-Username: admin'`
+
+Get a user by username user1 (requires authentication by same user or admin)
+`curl --location 'localhost:8080/users/named/user1' \
 --header 'X-Auth-Password: admin123' \
 --header 'X-Auth-Username: admin'`
 
