@@ -147,7 +147,7 @@ curl --location --request DELETE 'localhost:8080/movies/2' \
 ```
 
 #### Users
-Delete a user with id 1 (requires auth by same user or admin access)
+Delete a user with id 1 (requires auth by the same user or admin access)
 ```
 curl --location --request DELETE 'localhost:8080/users/1' \
 --header 'X-Auth-Password: pass1' \
@@ -155,7 +155,7 @@ curl --location --request DELETE 'localhost:8080/users/1' \
 ```
 
 #### Ratings
-Delete a rating of user with id 1 for a movie with id 3 (requires auth by same user)
+Delete a rating of a user with id 1 for a movie with id 3 (requires auth by the same user)
 ```
 curl --location --request DELETE 'localhost:8080/ratings?movieId=3&userId=1' \
 --header 'X-Auth-Password: pass1' \
@@ -163,19 +163,20 @@ curl --location --request DELETE 'localhost:8080/ratings?movieId=3&userId=1' \
 ```
 
 # Database
-- I used H2 database with file as storage.
+- I used H2 database with a file as storage.
 - Default path defined in application.properties is ./src/main/resources/static/db. This allows quick debugging.
-- In the docker image it is stored in data folder.
+- In the Docker image, it is stored in the data folder.
 
 # Test
 I've implemented unit tests for all controllers and services. They test basic happy flow and some edge cases.
-I also wrote unit tests for custom auth interceptor which tests each branch. 
+I also wrote unit tests for the custom auth interceptor, which test each branch. 
 
 # Implementation details
-I didn't create docker compose because it's not necessary with no other dependencies (as database is a file within project).
+I didn't create Docker Compose because it's not necessary with no other dependencies (as database is a file within project).
 
 ## Limitations and improvements
 - Currently, there is only one app admin with username "admin" and password "admin123" which is stored in application.properties _plainly_.
   It is not good to use this in production, but it is enough for this task.
   This admin is not stored in the database, so it is not possible to change it via API. 
-- In future it would be good to store users with roles in the database and allow changing them via API and have initial admin set too.
+- In the future, it would be good to store users with roles in the database and allow changing them via API, and have initial admin set too.
+- I didn't add Observability such as Prometheus (too much time spent already, not worth it tbh)
