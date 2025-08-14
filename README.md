@@ -1,3 +1,4 @@
+# Sky Home Assignment
 This is Java 21 with Spring BOOT + JPA solution for the management of users, movies and their ratings.
 
 # Building
