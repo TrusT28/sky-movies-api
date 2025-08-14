@@ -60,7 +60,7 @@ public class MoviesController {
     }
 
     @GetMapping("/named/{name}")
-    public MovieModel getMovieByName(@RequestParam String name) {
+    public MovieModel getMovieByName(@PathVariable String name) {
         return service.getMovieByName(name);
     }
 

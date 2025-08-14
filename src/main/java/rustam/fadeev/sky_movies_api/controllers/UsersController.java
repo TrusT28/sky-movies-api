@@ -50,7 +50,6 @@ public class UsersController {
         service.deleteUserById(userId);
     }
 
-    // TODO all of this should be authenticated
     @GetMapping("/{userId}/ratings")
     public List<UserRatingsModel> getRatingsOfUserById(@PathVariable Long userId) {
         return ratingsService.getRatingsOfUserById(userId);
@@ -58,7 +57,7 @@ public class UsersController {
 
     @GetMapping("/named/{username}")
     @RequirePasswordAuth
-    public ResponseEntity<UserPrivateModel> getUserByUsername(@RequestParam String username) {
+    public ResponseEntity<UserPrivateModel> getUserByUsername(@PathVariable String username) {
         UserPrivateModel loggedInUser = UserContext.get();
         if (!Objects.equals(loggedInUser.username(), "admin") && !loggedInUser.username().equals(username)) {
             logger.debug("User failed auth - cannot get info about another user");

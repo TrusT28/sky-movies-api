@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import java.sql.Date;
 
 @Entity
-@Table(name = "movies",        uniqueConstraints = {
+@Table(name = "movies", uniqueConstraints = {
         @UniqueConstraint(columnNames = "name"),
 })
 public class MovieEntity {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotNull
     @Column(nullable = false, unique = true)
@@ -37,5 +37,8 @@ public class MovieEntity {
 
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -54,4 +54,7 @@ public class UserEntity {
     public String getPasswordHash() {
         return passwordHash;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
